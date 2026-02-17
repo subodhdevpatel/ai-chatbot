@@ -1,2 +1,9 @@
 /venv
-/__pycache__*/
+/backend/__pycache__*/
+/backend/chroma_db
+chroma_db
+documents
+debug.log
+.env
+frontend/package-lock.json
+frontend/node_modules

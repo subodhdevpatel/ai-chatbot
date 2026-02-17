@@ -1,110 +1,111 @@
 # Domain-Specific AI Chatbot using Retrieval-Augmented Generation (RAG)
 
-## Project Title
-Build a Domain-Specific AI Chatbot using Retrieval-Augmented Generation (RAG)
+## Project Overview
+This project is a sophisticated AI-powered chatbot designed to answer user questions based on a specific set of documents. It utilizes a **Retrieval-Augmented Generation (RAG)** architecture to provide accurate, context-aware responses, minimizing hallucinations by grounding answers in your data.
 
-## Objective
-Design and build a simple AI-powered chatbot that can answer user questions based on a given set of documents using a RAG-based approach. The goal is to demonstrate understanding of how AI systems work in production environments.
+The application features a modern, **ChatGPT-like user interface** built with React and TailwindCSS, and a robust backend powered by FastAPI, ChromaDB, and OpenAI.
 
-## Features
-- Accepts natural language questions from users
-- Retrieves relevant information from provided documents
-- Uses an LLM (OpenAI GPT) to generate accurate, grounded responses based only on retrieved data
-- Simple and clean UI for user interaction
-- Document upload support (txt, pdf, md)
+## Key Features
+
+### 🧠 Intelligent Question Answering
+*   **RAG Architecture**: Retrieves precise context from your uploaded documents to answer questions.
+*   **Source Citations**: Every AI response includes citations to the specific source documents used.
+*   **Context-Aware**: Maintains conversation context within a chat session.
+
+### 📂 Document Management
+*   **Multi-Format Support**: Upload and chat with **.txt**, **.pdf**, and **.docx** files.
+*   **Document Preview**: Click on any document in the sidebar to preview its content directly in the app (PDFs supported natively).
+*   **Vector Search**: Uses **ChromaDB** with `all-MiniLM-L6-v2` embeddings for semantic search, not just keyword matching.
+*   **Persistent Storage**: Documents are ingested into a persistent vector store.
+
+### 💬 Enhanced User Experience
+*   **Chat History**: Automatically saves your chat history locally. View and continue past conversations.
+*   **New Chat**: Easily start a fresh conversation context.
+*   **File Uploads**: Integrated file upload via a paperclip icon in the chat input area.
+*   **Status Notifications**: Real-time feedback for file uploads (Success/Error states).
+*   **Delete Functionality**: Manage your workspace by deleting old chats or removing documents from the knowledge base.
 
 ## System Architecture
+
+```mermaid
+graph LR
+    User[User] <--> Frontend[React + Tailwind]
+    Frontend <--> Backend[FastAPI]
+    Backend <--> LLM[OpenAI GPT-3.5/4]
+    Backend <--> VectorDB[ChromaDB]
+    backend_logic[Ingest/Retrieve] --> VectorDB
 ```
-User <-> React Frontend <-> FastAPI Backend <-> Document Store & LLM
-```
-- **Frontend:** React app for chat interface and document upload
-- **Backend:** FastAPI server for chat and document ingestion endpoints
-- **Retrieval:** Simple keyword-based retrieval (mocked, can be replaced with vector DB)
-- **LLM:** OpenAI GPT-3.5/4 (or mock if no API key)
 
 ## Folder Structure
+
 ```
 backend/
-  main.py           # FastAPI app
-  chatbot.py        # RAG logic and LLM call
-  retriever.py      # Document retrieval logic
-  ingest.py         # Document ingestion and splitting
-  system_prompt.py  # System prompt for LLM
-  documents/        # Uploaded/ingested documents
+  main.py           # FastAPI application & API endpoints
+  chatbot.py        # Core RAG logic & LLM interaction
+  retriever.py      # ChromaDB query logic
+  ingest.py         # Document processing (PDF/Docx/Txt) & Vector embedding
+  system_prompt.py  # AI persona and instructions
+  documents/        # Local storage for uploaded files
+  chroma_db/        # Persistent vector database storage
+
 frontend/
   src/
-    components/     # Chat UI components
-    api/            # API client
-    ...
+    components/     # UI Components (ChatInterface, Sidebar, MessageList, etc.)
+    api/            # API client for backend communication
 ```
 
 ## Setup Instructions
 
-### Backend
-1. `cd backend`
-2. Create a `.env` file and add your OpenAI API key:
-   ```
-   OPENAI_API_KEY=sk-...
-   ```
-3. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   ```
-4. Run the backend:
-   ```bash
-   uvicorn main:app --reload
-   ```
+### Prerequisites
+*   Python 3.8+
+*   Node.js 14+
+*   OpenAI API Key
 
-### Frontend
-1. `cd frontend`
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-3. Start the frontend:
-   ```bash
-   npm start
-   ```
+### 1. Backend Setup
+Open a terminal in the root directory:
+
+1.  **Create a virtual environment (optional but recommended):**
+    ```bash
+    python -m venv venv
+    source venv/bin/activate  # On Windows: venv\Scripts\activate
+    ```
+
+2.  **Install Python dependencies:**
+    ```bash
+    pip install -r backend/requirements.txt
+    ```
+
+3.  **Configure Environment:**
+    Create a `.env` file in the root directory and add your OpenAI Key:
+    ```
+    OPENAI_API_KEY=sk-your-openai-key-here
+    ```
+
+4.  **Start the Backend Server:**
+    ```bash
+    python backend/main.py
+    ```
+    The server will start on `http://localhost:8000`.
+
+### 2. Frontend Setup
+Open a **new** terminal in the `frontend` directory:
+
+1.  **Install Node dependencies:**
+    ```bash
+    cd frontend
+    npm install
+    ```
+
+2.  **Start the React App:**
+    ```bash
+    npm start
+    ```
+    The application will open at `http://localhost:3000` (or similar port).
 
 ## Usage
-- Ask questions in the chat UI. The bot will answer using only the ingested documents.
-- Upload new documents to expand the knowledge base.
 
-## Design Decisions
-- **RAG Pattern:** Ensures answers are grounded in source data, reducing hallucinations.
-- **System Prompt:** Strict instructions to only answer from retrieved context.
-- **Mock Retrieval:** Simple keyword search for demo; can be replaced with vector DB (e.g., ChromaDB, Pinecone).
-- **OpenAI LLM:** Used for generation; falls back to mock if no API key.
-- **Frontend/Backend Separation:** Clean API boundary for scalability.
-
-## Edge Cases & Limitations
-- If no relevant document is found, the bot will say it doesn't have enough information.
-- Only `.txt` files are fully supported for ingestion (PDF support is stubbed).
-- Retrieval is basic; for production, use a vector DB and embeddings.
-- No authentication or user management.
-- LLM responses are only as good as the context retrieved.
-
-## Improvements (with more time)
-- Integrate a real vector database for semantic search
-- Add PDF parsing and richer document support
-- Improve UI/UX and add chat history
-- Add authentication and user management
-- Support for multiple LLM providers
-- Better error handling and logging
-
-## Example Questions for Omega Project
-Here are some questions you can ask the chatbot based on the Omega Project documents:
-
-- What is the Omega Project?
-- Who is the lead researcher of the Omega Project?
-- Where is the headquarters of the Omega Project?
-- What happened to the Omega Project in late 2024?
-- What is the Alpha Protocol?
-- Who funds the Omega Project?
-- What are the technical goals of the Omega Project?
-- What is the main rival to the Omega Project?
-- When did operations resume for the Omega Project?
-- What is the mission of the Omega Project?
-
-## License
-MIT
+1.  **Upload Documents**: Click the **paperclip icon** (`+`) next to the message input to upload PDF, TXT, or DOCX files.
+2.  **Wait for Processing**: A notification will confirm when the file is successfully ingested.
+3.  **Ask Questions**: Type your query in the chat box. The AI will answer based on *only* the uploaded documents.
+4.  **Manage**: Use the sidebar to switch between chats, delete history, or remove documents.
+5.  **Preview**: Click a document name in the sidebar to view its content.

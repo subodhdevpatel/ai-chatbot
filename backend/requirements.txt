@@ -6,3 +6,5 @@ pydantic
 chromadb
 sentence-transformers
 pypdf
+python-multipart
+python-docx

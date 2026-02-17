@@ -5,11 +5,19 @@ from openai import OpenAI
 from system_prompt import SYSTEM_PROMPT
 from retriever import file_retrieve
 
-load_dotenv()
+# Load .env from project root
+env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+load_dotenv(dotenv_path=env_path)
 
 # Initialize OpenAI Client if API key is present
 api_key = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=api_key) if api_key else None
+
+if api_key:
+    print(f"OpenAI API Key loaded: {api_key[:8]}...{api_key[-4:]}")
+    client = OpenAI(api_key=api_key)
+else:
+    print("WARNING: OpenAI API Key not found. Chatbot running in mock mode.")
+    client = None
 
 def generate_response(user_query: str) -> str:
     """
@@ -45,4 +53,4 @@ def generate_response(user_query: str) -> str:
         # Mock LLM behavior for demo purposes without API key
         if not retrieved_docs:
             return "I don't have enough information in the provided documents to answer that question."
-        return f"[MOCK AI RESPONSE]\nRelevant info:\n{chr(10).join(retrieved_docs)}\n\n(Note: Set OPENAI_API_KEY in .env to get real AI responses)"
+        return f"[DOCUMENT CONTEXT]\nFound relevant info:\n{chr(10).join(retrieved_docs)}\n\n(Note: Set OPENAI_API_KEY in .env to get AI-generated answers)"

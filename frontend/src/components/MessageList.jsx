@@ -3,57 +3,52 @@ import React from 'react';
 const MessageList = ({ messages, isLoading, messagesEndRef }) => {
     return (
         <div className="flex-1 overflow-y-auto p-4 space-y-6 scrollbar-hide">
-            {messages.map((msg) => (
-                <div
-                    key={msg.id}
-                    className={`group flex w-full ${msg.sender === 'user' ? 'justify-end' : 'justify-start'
-                        }`}
-                >
-                    <div
-                        className={`flex max-w-[80%] md:max-w-[70%] gap-3 ${msg.sender === 'user' ? 'flex-row-reverse' : 'flex-row'
-                            }`}
-                    >
-                        {/* Avatar */}
-                        <div
-                            className={`flex-none w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium shadow-sm ${msg.sender === 'user'
-                                    ? 'bg-gray-700 text-gray-300'
-                                    : 'bg-primary-600 text-white'
-                                }`}
-                        >
-                            {msg.sender === 'user' ? 'U' : 'AI'}
-                        </div>
+            {messages.map((msg) => {
+                // Only render User and AI messages, skip system upload messages
+                if (msg.isUpload) return null;
 
-                        {/* Bubble */}
-                        <div
-                            className={`relative px-5 py-3.5 rounded-2xl shadow-sm text-[15px] leading-relaxed ${msg.sender === 'user'
-                                    ? 'bg-gray-700 text-gray-100 rounded-tr-sm'
-                                    : 'bg-dark-surface border border-dark-border text-gray-200 rounded-tl-sm'
-                                }`}
-                        >
-                            <div className="whitespace-pre-wrap">{msg.text}</div>
-                            <span className={`text-[10px] opacity-50 mt-1 block w-full ${msg.sender === 'user' ? 'text-right' : 'text-left'
+                // User / AI Message
+                return (
+                    <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'} animate-fade-in`}>
+                        <div className={`max-w-[80%] rounded-2xl px-5 py-4 shadow-md backdrop-blur-sm ${msg.sender === 'user'
+                                ? 'bg-primary-600/90 text-white rounded-br-none'
+                                : 'bg-dark-surface/90 text-gray-100 border border-dark-border rounded-bl-none'
+                            }`}>
+                            <div className="text-sm leading-relaxed whitespace-pre-wrap">{msg.text}</div>
+
+                            {/* Sources Section for AI messages */}
+                            {msg.sources && msg.sources.length > 0 && (
+                                <div className="mt-3 pt-3 border-t border-gray-600/50 text-xs text-gray-400">
+                                    <strong>Sources:</strong>
+                                    <ul className="list-disc list-inside mt-1 space-y-0.5">
+                                        {msg.sources.map((src, i) => (
+                                            <li key={i} className="truncate" title={src}>{src}</li>
+                                        ))}
+                                    </ul>
+                                </div>
+                            )}
+
+                            {/* Metadata */}
+                            <div className={`text-[10px] mt-2 opacity-50 flex items-center gap-1 ${msg.sender === 'user' ? 'justify-end text-primary-100' : 'justify-start text-gray-400'
                                 }`}>
-                                {msg.timestamp}
-                            </span>
+                                <span>{msg.timestamp}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
+                );
+            })}
 
+            {/* Loading Indicator */}
             {isLoading && (
-                <div className="flex justify-start w-full">
-                    <div className="flex max-w-[80%] gap-3">
-                        <div className="flex-none w-8 h-8 rounded-full bg-primary-600 text-white flex items-center justify-center text-sm font-medium animate-pulse">
-                            AI
-                        </div>
-                        <div className="bg-dark-surface border border-dark-border px-4 py-3 rounded-2xl rounded-tl-sm flex items-center gap-1">
-                            <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                            <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '150ms' }}></div>
-                            <div className="w-2 h-2 rounded-full bg-gray-400 animate-bounce" style={{ animationDelay: '300ms' }}></div>
-                        </div>
+                <div className="flex justify-start animate-fade-in">
+                    <div className="bg-dark-surface/90 border border-dark-border rounded-2xl rounded-bl-none px-5 py-4 shadow-md flex items-center gap-1.5">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
                     </div>
                 </div>
             )}
+
             <div ref={messagesEndRef} />
         </div>
     );
